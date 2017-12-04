@@ -27,6 +27,6 @@ nbdist/
 /mvnw.cmd
 /spring-boot-oauth2.iml
 /mvnw
-/src/main/resources/application-bak.properties
+/src/main/resources/application.properties
 /src/test/
 /target/
