@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -41,6 +42,12 @@ public class OAuth2Interceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         try {
             String accessToken = request.getParameter("access_token");//请求体中或请求头中获取参数
+
+            if (StringUtils.isEmpty(accessToken)) {
+                // 如果不存在/过期了，返回未验证错误，需重新验证
+                oAuthFaileResponse(response);
+                return false;
+            }
 
             //验证Access Token
             if (!checkAccessToken(accessToken)) {
