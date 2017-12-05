@@ -45,7 +45,7 @@ public class OAuth2Controller {
                             @RequestParam(value = "response_type", defaultValue = "") String response_type,
                             @RequestParam(value = "client_id", defaultValue = "") String client_id,
                             @RequestParam(value = "redirect_uri", defaultValue = "") String redirect_uri,
-                            @RequestParam(value = "scope", defaultValue = "") String scope,
+                            @RequestParam(value = "scope", defaultValue = "basic") String scope,
                             @RequestParam(value = "state", defaultValue = "") String state) {
         Result result = new Result();
         try {
@@ -74,6 +74,15 @@ public class OAuth2Controller {
         if ((Boolean) result.get("success") == false) {
             return result;
         }
+
+        //当 scope 不等于默认值时检查认证权限
+        if (!scope.equals("basic")) {
+            result = checkScope(client_id, scope);
+            if ((Boolean) result.get("success") == false) {
+                return result;
+            }
+        }
+
 
         //查看是否已经已有 authorizationCode
         result = checkExistCode(client_id, redirect_uri, state);
@@ -110,7 +119,7 @@ public class OAuth2Controller {
     @PostMapping(value = {"/oauth/token"})
     public Result token(HttpServletRequest request,
                         @RequestParam(value = "grant_type", defaultValue = "") String grant_type,
-                        @RequestParam(value = "scope", defaultValue = "") String scope,
+                        @RequestParam(value = "scope", defaultValue = "basic") String scope,
                         @RequestParam(value = "client_id", defaultValue = "") String client_id,
                         @RequestParam(value = "client_secret", defaultValue = "") String client_secret,
                         @RequestParam(value = "username", defaultValue = "") String username,
@@ -138,42 +147,50 @@ public class OAuth2Controller {
         if ((Boolean) result.get("success") == false) {
             return result;
         }
+
+        //当 scope 不等于默认值时检查认证权限
+        if (!scope.equals("basic")) {
+            result = checkScope(client_id, scope);
+            if ((Boolean) result.get("success") == false) {
+                return result;
+            }
+        }
+
         // 检查客户端安全KEY是否正确
         result = checkClientSecret(client_secret);
         if ((Boolean) result.get("success") == false) {
             return result;
         }
 
-        // 检查验证类型，此处只检查AUTHORIZATION_CODE类型
         if (grant_type.equals(GrantType.AUTHORIZATION_CODE.toString())) {
+            // 检查验证类型，此处只检查AUTHORIZATION_CODE类型
             result = checkAuthCode(code, client_id);
             if ((Boolean) result.get("success") == false) {
                 return result;
             }
-        }
-
-        //检查验证类型,此处只检查 CLIENT_CREDENTIALS类型
-        if (grant_type.equals(GrantType.CLIENT_CREDENTIALS.toString())) {
+        } else if (grant_type.equals(GrantType.CLIENT_CREDENTIALS.toString())) {
+            //检查验证类型,此处只检查 CLIENT_CREDENTIALS类型
             result = checkAccount(client_id, client_secret);
             if ((Boolean) result.get("success") == false) {
                 return result;
             }
-        }
-
-        // 检查验证类型，此处只检查PASSWORDE类型
-        if (grant_type.equals(GrantType.PASSWORD.toString())) {
+        } else if (grant_type.equals(GrantType.PASSWORD.toString())) {
+            // 检查验证类型，此处只检查PASSWORDE类型
             result = checkUser(username, password);
             if ((Boolean) result.get("success") == false) {
                 return result;
             }
-        }
-
-        // 检查验证类型，此处只检查REFRESH_TOKEN类型
-        if (grant_type.equals(GrantType.REFRESH_TOKEN.toString())) {
+        } else if (grant_type.equals(GrantType.REFRESH_TOKEN.toString())) {
+            // 检查验证类型，此处只检查REFRESH_TOKEN类型
             result = checkRefreshToken(client_id, refresh_token);
             if ((Boolean) result.get("success") == false) {
                 return result;
             }
+        } else {
+            //不支持的类型
+            result.setSuccess(false);
+            result.setError(ErrorCode.RESPONSETYPE_ERROR);
+            return result;
         }
 
         //查看是否已经已有 Access Token
@@ -314,5 +331,15 @@ public class OAuth2Controller {
         return result;
     }
 
+    //当 scope 不等于默认值时检查认证权限
+    Result checkScope(String client_id, String scope) {
+        Result result = new Result();
+        if (!oAuth2Service.checkScope(client_id, scope)) {
+            result.setError(ErrorCode.APP_PERMISSIONS_FAIL);
+            return result;
+        }
+        result.setSuccess(true);
+        return result;
+    }
 
 }

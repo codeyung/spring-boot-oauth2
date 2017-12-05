@@ -22,7 +22,8 @@ public enum ErrorCode {
     INVALID_AUTH_USER(10, "错误的用户名/密码"),
     RESPONSETYPE_ERROR(11, "授权类型错误"),
     ACCESS_TOKEN_FAIL(12, "accessToken创建失败"),
-    OAUT_CODE_FAIL(13, "授权码创建失败");
+    OAUT_CODE_FAIL(13, "授权码创建失败"),
+    APP_PERMISSIONS_FAIL(14, "权限不足，范围错误");
 
 
     private int code;

@@ -24,6 +24,11 @@ public class OAuth2Service {
         return oAuth2Dao.checkClientId(client_id);
     }
 
+    //当 scope 不等于默认值时检查认证权限
+    public boolean checkScope(String client_id, String scope) {
+        return false;
+    }
+
     // 检查secret 是否正确
     public boolean checkClientSecret(String client_secret) {
         return oAuth2Dao.checkClientSecret(client_secret);

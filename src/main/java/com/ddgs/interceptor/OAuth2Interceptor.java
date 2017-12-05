@@ -40,24 +40,35 @@ public class OAuth2Interceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(OAuth2Interceptor.class);
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+        Result result = new Result();
+        result.setError(ErrorCode.INVALID_ACCESS_TOKEN);
         try {
             String accessToken = request.getParameter("access_token");//请求体中或请求头中获取参数
 
             if (StringUtils.isEmpty(accessToken)) {
                 // 如果不存在/过期了，返回未验证错误，需重新验证
-                oAuthFaileResponse(response);
+                oAuthFaileResponse(response, result);
                 return false;
             }
 
             //验证Access Token
             if (!checkAccessToken(accessToken)) {
                 // 如果不存在/过期了，返回未验证错误，需重新验证
-                oAuthFaileResponse(response);
+                oAuthFaileResponse(response, result);
+                return false;
+            }
+
+            String url = "";
+            //URL 权限验证
+            if (!checkURL(accessToken, url)) {
+                // 权限不符 访问了没有权限的 URL
+                result.setError(ErrorCode.APP_PERMISSIONS_FAIL);
+                oAuthFaileResponse(response, result);
                 return false;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            oAuthFaileResponse(response);
+            oAuthFaileResponse(response, result);
             return false;
         }
         return true;
@@ -81,9 +92,7 @@ public class OAuth2Interceptor implements HandlerInterceptor {
      * @param res
      * @throws IOException
      */
-    private void oAuthFaileResponse(HttpServletResponse res) throws IOException {
-        Result result = new Result();
-        result.setError(ErrorCode.INVALID_ACCESS_TOKEN);
+    private void oAuthFaileResponse(HttpServletResponse res, Result result) throws IOException {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add("Content-Type", "application/json; charset=utf-8");
         res.setCharacterEncoding("UTF-8");
@@ -122,5 +131,16 @@ public class OAuth2Interceptor implements HandlerInterceptor {
         }
         return false;
 
+    }
+
+    /**
+     * 验证权限
+     *
+     * @param accessToken
+     * @param url
+     * @return
+     */
+    private boolean checkURL(String accessToken, String url) {
+        return false;
     }
 }

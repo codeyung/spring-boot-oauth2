@@ -4,15 +4,15 @@
 
 
     <select id="checkClientId" resultType="boolean">
-         select count(*) from oauth_client_details where client_id = #{client_id};
+         select count(*) from OAuth2Client where client_id = #{client_id};
     </select>
 
     <select id="checkClientSecret" resultType="boolean">
-         select count(*) from oauth_client_details where client_secret = #{client_secret};
+         select count(*) from OAuth2Client where client_secret = #{client_secret};
     </select>
 
     <select id="getAIdByClientId" resultType="string">
-         select aId from oauth_client_details where client_id = #{client_id};
+         select aId from OAuth2Client where client_id = #{client_id};
     </select>
 
 </mapper>
