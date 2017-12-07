@@ -62,7 +62,6 @@ public class OAuth2Controller {
             return result;
         }
 
-
         if (OAuthUtils.isEmpty(redirect_uri)) {
             //告诉客户端没有传入redirectUri直接报错
             result.setError(ErrorCode.INVALID_REDIRECT_URI);
@@ -76,13 +75,12 @@ public class OAuth2Controller {
         }
 
         //当 scope 不等于默认值时检查认证权限
-        if (!scope.equals("basic")) {
+        if (!"basic".equals(scope)) {
             result = checkScope(client_id, scope);
             if ((Boolean) result.get("success") == false) {
                 return result;
             }
         }
-
 
         //查看是否已经已有 authorizationCode
         result = checkExistCode(client_id, redirect_uri, state);
@@ -97,6 +95,7 @@ public class OAuth2Controller {
             result.setError(ErrorCode.RESPONSETYPE_ERROR);
             return result;
         }
+
         //生成授权码
         OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
         try {
@@ -107,6 +106,7 @@ public class OAuth2Controller {
             result.setError(ErrorCode.OAUT_CODE_FAIL);
             return result;
         }
+
         oAuth2Service.addAuthCode(authorizationCode, client_id);
         //得到到客户端重定向地址
         result.setSuccess(true);
@@ -177,7 +177,7 @@ public class OAuth2Controller {
         }
 
         //当 scope 不等于默认值时检查认证权限
-        if (!scope.equals("basic")) {
+        if (!"basic".equals(scope)) {
             result = checkScope(client_id, scope);
             if ((Boolean) result.get("success") == false) {
                 return result;
@@ -213,7 +213,6 @@ public class OAuth2Controller {
         result.put("expires_in", oAuth2Service.getExpireIn());
         return result;
 
-
     }
 
 
@@ -228,7 +227,12 @@ public class OAuth2Controller {
         return result;
     }
 
-    //检查提交的客户端id是否正确
+    /**
+     * 检查提交的客户端id是否正确
+     *
+     * @param client_id
+     * @return
+     */
     Result checkClientId(String client_id) {
         Result result = new Result();
         if (!oAuth2Service.checkClientId(client_id)) {
@@ -241,7 +245,12 @@ public class OAuth2Controller {
     }
 
 
-    // 检查客户端安全KEY是否正确
+    /**
+     * 检查客户端安全KEY是否正确
+     *
+     * @param client_secret
+     * @return
+     */
     Result checkClientSecret(String client_secret) {
         Result result = new Result();
         if (!oAuth2Service.checkClientSecret(client_secret)) {
@@ -252,7 +261,13 @@ public class OAuth2Controller {
         return result;
     }
 
-    // 检查验证类型，此处只检查AUTHORIZATION_CODE类型
+    /**
+     * 检查验证类型，此处只检查AUTHORIZATION_CODE类型
+     *
+     * @param authCode
+     * @param client_id
+     * @return
+     */
     Result checkAuthCode(String authCode, String client_id) {
         Result result = new Result();
         if (!oAuth2Service.checkAuthCode(authCode, client_id)) {
@@ -264,7 +279,13 @@ public class OAuth2Controller {
     }
 
 
-    // 检查验证类型,此处只检查 CLIENT_CREDENTIALS类型
+    /**
+     * 检查验证类型,此处只检查 CLIENT_CREDENTIALS类型
+     *
+     * @param client_id
+     * @param client_secret
+     * @return
+     */
     Result checkAccount(String client_id, String client_secret) {
         Result result = new Result();
         if (!oAuth2Service.checkAccount(client_id, client_secret)) {
@@ -275,7 +296,13 @@ public class OAuth2Controller {
         return result;
     }
 
-    // 检查验证类型，此处只检查PASSWORD类型
+    /**
+     * 检查验证类型，此处只检查PASSWORD类型
+     *
+     * @param username
+     * @param password
+     * @return
+     */
     Result checkUser(String username, String password) {
         Result result = new Result();
         if (!oAuth2Service.checkUser(username, password)) {
@@ -286,7 +313,13 @@ public class OAuth2Controller {
         return result;
     }
 
-    // 检查验证类型，此处只检查REFRESH_TOKEN类型
+    /**
+     * 检查验证类型，此处只检查REFRESH_TOKEN类型
+     *
+     * @param client_id
+     * @param refresh_token
+     * @return
+     */
     Result checkRefreshToken(String client_id, String refresh_token) {
         Result result = new Result();
         if (!oAuth2Service.checkRefreshToken(client_id, refresh_token)) {
@@ -297,7 +330,12 @@ public class OAuth2Controller {
         return result;
     }
 
-    //查看是否已经已有 Access Token
+    /**
+     * 查看是否已经已有 Access Token
+     *
+     * @param client_id
+     * @return
+     */
     Result checkExistAccessToekn(String client_id) {
         Result result = new Result();
         String accessToken = oAuth2Service.getAccessTokenByClientId(client_id);
@@ -310,7 +348,14 @@ public class OAuth2Controller {
         return result;
     }
 
-    //查看是否已经已有 authorizationCode
+    /**
+     * 查看是否已经已有 authorizationCode
+     *
+     * @param client_id
+     * @param redirect_uri
+     * @param state
+     * @return
+     */
     Result checkExistCode(String client_id, String redirect_uri, String state) {
         Result result = new Result();
         String authorizationCode = oAuth2Service.getAuthCodeByClientId(client_id);
@@ -322,7 +367,13 @@ public class OAuth2Controller {
         return result;
     }
 
-    //当 scope 不等于默认值时检查认证权限
+    /**
+     * 当 scope 不等于默认值时检查认证权限
+     *
+     * @param client_id
+     * @param scope
+     * @return
+     */
     Result checkScope(String client_id, String scope) {
         Result result = new Result();
         if (!oAuth2Service.checkScope(client_id, scope)) {
