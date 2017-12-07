@@ -2,7 +2,7 @@ package com.ddgs.interceptor;
 
 import com.ddgs.ErrorCode;
 import com.ddgs.Result;
-import com.ddgs.service.OAuth2InterceptorService;
+import com.ddgs.service.URLService;
 import com.ddgs.tools.JSONUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -40,7 +40,7 @@ public class OAuth2Interceptor implements HandlerInterceptor {
     private String CHECK_ACCESS_CODE_URL;
 
     @Autowired
-    OAuth2InterceptorService oAuth2InterceptorService;
+    URLService urlService;
 
     private static final Logger logger = LoggerFactory.getLogger(OAuth2Interceptor.class);
 
@@ -63,9 +63,8 @@ public class OAuth2Interceptor implements HandlerInterceptor {
                 return false;
             }
 
-            String url = "";
             //URL 权限验证
-            if (!checkURL(accessToken, url)) {
+            if (!checkURL(request, accessToken)) {
                 // 权限不符 访问了没有权限的 URL
                 result.setError(ErrorCode.APP_PERMISSIONS_FAIL);
                 oAuthFaileResponse(response, result);
@@ -142,10 +141,13 @@ public class OAuth2Interceptor implements HandlerInterceptor {
      * 验证权限
      *
      * @param accessToken
-     * @param url
+     * @param request
      * @return
      */
-    private boolean checkURL(String accessToken, String url) {
-        return oAuth2InterceptorService.checkURL(accessToken, url);
+    private boolean checkURL(HttpServletRequest request, String accessToken) {
+        String url = request.getMethod() + ":" + request.getRequestURI();
+        return urlService.checkURL(accessToken, url);
     }
+
+
 }

@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.ddgs.dao.AccountDao">
+<mapper namespace="com.ddgs.dao.URLDao">
 
-    <resultMap id="urls" type="com.ddgs.model.Account">
-        <id property="id" column="id"/>
-        <result property="name" column="name"/>
-        <result property="password" column="password"/>
-        <collection property="urls" ofType="com.ddgs.model.OpenAPI"
-                    column="id">
-            <id column="rId" property="id"/>
-            <result column="url" property="url"/>
-        </collection>
-    </resultMap>
+    <select id="getURLs" resultType="string">
+      select url from OAuth2Client a , AccountScope b , OpenAPI c where
+        a.aId = b.aId and b.sId = c.sId and a.client_id = #{client_id} ;
 
-
-    <select id="findByName" resultMap="urls">
-      select a.id,a.username as name ,a.password,c.id as id ,c.url from Account a,AccountScope b ,OpenAPI c
-          where a.username = #{username} and a.id = b.aId and b.sId = c.sId;
     </select>
-
 </mapper>

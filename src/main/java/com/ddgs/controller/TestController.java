@@ -2,6 +2,7 @@ package com.ddgs.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -20,6 +21,11 @@ public class TestController {
     @GetMapping("/order/{id}")
     public String getOrder(@PathVariable String id) {
         return "order id : " + id;
+    }
+
+    @PostMapping("/root/{id}")
+    public String root() {
+        return "root ";
     }
 
 

@@ -12,5 +12,12 @@ public interface OAuth2Dao {
 
     boolean checkClientSecret(@Param("client_secret") String client_secret);
 
+    boolean checkClient(@Param("client_id") String client_id, @Param("client_secret") String client_secret);
+
+    boolean checkAccount(@Param("username") String username, @Param("password") String password);
+
     String getClientIdByName(@Param("username") String username);
+
+
+    boolean checkScope(@Param("num") int num, @Param("client_id") String client_id, @Param("scopes") String[] scopes);
 }

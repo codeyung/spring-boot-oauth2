@@ -150,26 +150,28 @@ public class OAuth2Controller {
             }
         } else if (grant_type.equals(GrantType.CLIENT_CREDENTIALS.toString())) {
             //检查验证类型,此处只检查 CLIENT_CREDENTIALS类型
-            result = checkAccount(client_id, client_secret);
+            result = checkClient(client_id, client_secret);
             if ((Boolean) result.get("success") == false) {
                 return result;
             }
         } else if (grant_type.equals(GrantType.PASSWORD.toString())) {
             // 检查验证类型，此处只检查PASSWORDE类型
-            result = checkUser(username, password);
+            result = checkAccount(username, password);
             if ((Boolean) result.get("success") == false) {
                 return result;
             }
             //获取 client_id
             client_id = oAuth2Service.getClientIdByName(username);
-        } else if (grant_type.equals(GrantType.REFRESH_TOKEN.toString())) {
-            // 检查验证类型，此处只检查REFRESH_TOKEN类型
-            result = checkRefreshToken(client_id, refresh_token);
-            if ((Boolean) result.get("success") == false) {
-                return result;
-            }
-
-        } else {
+        }
+//        else if (grant_type.equals(GrantType.REFRESH_TOKEN.toString())) {
+//            // 检查验证类型，此处只检查REFRESH_TOKEN类型
+//            result = checkRefreshToken(client_id, refresh_token);
+//            if ((Boolean) result.get("success") == false) {
+//                return result;
+//            }
+//
+//        }
+        else {
             //不支持的类型
             result.setSuccess(false);
             result.setError(ErrorCode.RESPONSETYPE_ERROR);
@@ -207,10 +209,22 @@ public class OAuth2Controller {
         result.setSuccess(true);
         result.put("access_token", accessToken);
         result.put("token_type", "bearer");
-        //绑定RefreshToken 后期支持
-//        oAuthService.addAccessToken(accessToken, oAuthService.getAIdByClientId(client_id));
+
+
+//        //生成RefreshToken
+//        String refreshToken = null;
+//        try {
+//            refreshToken = oauthIssuerImpl.accessToken();
+//        } catch (OAuthSystemException e) {
+//            e.printStackTrace();
+//            result.setSuccess(false);
+//            result.setError(ErrorCode.ACCESS_TOKEN_FAIL);
+//            return result;
+//        }
+//        //绑定RefreshToken 后期支持
+//        oAuth2Service.addRefreshToken(refreshToken, client_id);
 //        result.put("refresh_token", refresh_token);
-        result.put("expires_in", oAuth2Service.getExpireIn());
+        result.put("expires_in", oAuth2Service.getExpireIn(accessToken));
         return result;
 
     }
@@ -223,6 +237,7 @@ public class OAuth2Controller {
             result.setError(ErrorCode.INVALID_ACCESS_TOKEN);
             return result;
         }
+        result.put("expires_in", oAuth2Service.getExpireIn(accessToken));
         result.setSuccess(true);
         return result;
     }
@@ -286,9 +301,9 @@ public class OAuth2Controller {
      * @param client_secret
      * @return
      */
-    Result checkAccount(String client_id, String client_secret) {
+    Result checkClient(String client_id, String client_secret) {
         Result result = new Result();
-        if (!oAuth2Service.checkAccount(client_id, client_secret)) {
+        if (!oAuth2Service.checkClient(client_id, client_secret)) {
             result.setError(ErrorCode.INVALID_CLIENT_ID);
             return result;
         }
@@ -303,9 +318,9 @@ public class OAuth2Controller {
      * @param password
      * @return
      */
-    Result checkUser(String username, String password) {
+    Result checkAccount(String username, String password) {
         Result result = new Result();
-        if (!oAuth2Service.checkUser(username, password)) {
+        if (!oAuth2Service.checkAccount(username, password)) {
             result.setError(ErrorCode.INVALID_AUTH_USER);
             return result;
         }
@@ -342,7 +357,7 @@ public class OAuth2Controller {
         if (!StringUtils.isEmpty(accessToken)) {
             result.setSuccess(true);
             result.put("access_token", accessToken);
-            result.put("expires_in", oAuth2Service.getExpireIn());
+            result.put("expires_in", oAuth2Service.getExpireIn(accessToken));
             return result;
         }
         return result;

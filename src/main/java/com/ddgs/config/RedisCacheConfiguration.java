@@ -50,6 +50,9 @@ public class RedisCacheConfiguration extends CachingConfigurerSupport {
     @Value("${spring.redis.password}")
     private String password;
 
+    @Value("${spring.redis.database}")
+    private int index;
+
 
     @Bean
     public KeyGenerator redisGenerator() {
@@ -82,6 +85,7 @@ public class RedisCacheConfiguration extends CachingConfigurerSupport {
         factory.setHostName(host);
         factory.setPassword(password);
         factory.setPort(port);
+        factory.setDatabase(index);
 
         //其他配置，可再次扩展
         return factory;

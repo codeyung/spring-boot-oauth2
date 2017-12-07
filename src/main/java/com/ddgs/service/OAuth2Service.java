@@ -3,6 +3,7 @@ package com.ddgs.service;
 import com.ddgs.dao.OAuth2Dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 /**
  * @author: codeyung  E-mail:yjc199308@gmail.com
@@ -14,10 +15,8 @@ public class OAuth2Service {
     @Autowired
     OAuth2Dao oAuth2Dao;
 
-    // 检查code 是否存在
-    public boolean checkAuthCode(String code, String client_id) {
-        return true;
-    }
+    @Autowired
+    RedisService redisService;
 
     //查看 clientId 是否存在
     public boolean checkClientId(String client_id) {
@@ -26,7 +25,8 @@ public class OAuth2Service {
 
     //当 scope 不等于默认值时检查认证权限
     public boolean checkScope(String client_id, String scope) {
-        return false;
+        String[] scopes = scope.split(",");
+        return oAuth2Dao.checkScope(scopes.length, client_id, scopes);
     }
 
     // 检查secret 是否正确
@@ -34,10 +34,15 @@ public class OAuth2Service {
         return oAuth2Dao.checkClientSecret(client_secret);
     }
 
+    //验证授权客户端是否存在
+    public boolean checkClient(String client_id, String client_secret) {
+        return oAuth2Dao.checkClient(client_id, client_secret);
+    }
+
 
     //验证用户帐号密码是否登录
-    public boolean checkUser(String username, String password) {
-        return true;
+    public boolean checkAccount(String username, String password) {
+        return oAuth2Dao.checkAccount(username, password);
     }
 
     //根据用户名 获取 clientId
@@ -45,43 +50,64 @@ public class OAuth2Service {
         return oAuth2Dao.getClientIdByName(username);
     }
 
-    //验证授权账户是否存在
-    public boolean checkAccount(String client_id, String client_secret) {
-        return true;
+    //给响应用户添加 accessToken
+    public void addAccessToken(String accessToken, String client_id) {
+        redisService.set("access_token_" + accessToken, client_id, 3600);
+        redisService.set("access_token_client_id_" + client_id, accessToken, 3660);
+    }
+
+    //给响应用户添加 refreshToken
+    public void addRefreshToken(String refreshToken, String client_id) {
+        redisService.set("refresh_token_" + refreshToken, client_id, 3600);
+        redisService.set("refresh_client_id_" + client_id, refreshToken, 3660);
     }
 
     //验证refresh_token是否存在
     public boolean checkRefreshToken(String client_id, String refresh_token) {
-        return false;
+        String token = redisService.get("refresh_client_id_" + client_id);
+
+        if (StringUtils.isEmpty(token) || !token.equals(refresh_token)) {
+            return false;
+        }
+
+        return true;
     }
 
-    //验证 token 是否存在
-    public boolean checkAccessToken(String accessToken) {
+    // 检查code 是否存在
+    public boolean checkAuthCode(String code, String client_id) {
+        String authCode = redisService.get("authorizationCode_" + client_id);
+
+        if (StringUtils.isEmpty(authCode) || !authCode.equals(code)) {
+            return false;
+        }
+        redisService.del("authorizationCode_" + client_id);
         return true;
     }
 
     //根据 client_id 获取 accessToken
     public String getAccessTokenByClientId(String client_id) {
-        return "";
+        return redisService.get("access_token_client_id_" + client_id);
     }
 
     //根据 client_id 获取 AuthCode
     public String getAuthCodeByClientId(String client_id) {
-        return "";
+        return redisService.get("authorizationCode_" + client_id);
     }
 
     //code 授权码跟用户绑定
     public void addAuthCode(String code, String client_id) {
+        redisService.set("authorizationCode_" + client_id, code, 3600);
     }
 
-    //给响应用户添加 accessToken
-    public void addAccessToken(String accessToken, String client_id) {
-
+    //验证 token 是否存在
+    public boolean checkAccessToken(String accessToken) {
+        return redisService.hasKey("access_token_" + accessToken);
     }
 
     //auth code / access token 过期时间
-    public long getExpireIn() {
-        return 3600;
+    public long getExpireIn(String accessToken) {
+        return redisService.getExpire("access_token_" + accessToken);
     }
+
 
 }
