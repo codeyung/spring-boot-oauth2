@@ -11,8 +11,8 @@
          select count(*) from OAuth2Client where client_secret = #{client_secret};
     </select>
 
-    <select id="getAIdByClientId" resultType="string">
-         select aId from OAuth2Client where client_id = #{client_id};
+    <select id="getClientIdByName" resultType="string">
+        select b.client_id from Account a , OAuth2Client b where a.id = b.aId and a.username = #{username};
     </select>
 
 </mapper>

@@ -40,6 +40,11 @@ public class OAuth2Service {
         return true;
     }
 
+    //根据用户名 获取 clientId
+    public String getClientIdByName(String username) {
+        return oAuth2Dao.getClientIdByName(username);
+    }
+
     //验证授权账户是否存在
     public boolean checkAccount(String client_id, String client_secret) {
         return true;
@@ -79,15 +84,9 @@ public class OAuth2Service {
 
     }
 
-    //根据clientId 获取 用户
-    public String getAIdByClientId(String client_id) {
-        return oAuth2Dao.getAIdByClientId(client_id);
-    }
-
     //auth code / access token 过期时间
     public long getExpireIn() {
         return 3600;
     }
-
 
 }

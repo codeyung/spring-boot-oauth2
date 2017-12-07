@@ -13,16 +13,14 @@ public class Account {
     private String phone;
     private String password;
 
-
     private String clientId;
     private String secret;
 
     private String scope;
-    private String authorized_grant_types;
     private String redirect_uri;
 
 
-    private List<Role> roles;
+    private List<OpenAPI> urls;
 
 
 }

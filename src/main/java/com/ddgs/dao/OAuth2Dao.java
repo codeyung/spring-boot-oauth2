@@ -7,10 +7,10 @@ import org.apache.ibatis.annotations.Param;
  * @date: 2017/11/30.上午11:50
  */
 public interface OAuth2Dao {
-    
+
     boolean checkClientId(@Param("client_id") String client_id);
 
     boolean checkClientSecret(@Param("client_secret") String client_secret);
 
-    String getAIdByClientId(@Param("client_id") String client_id);
+    String getClientIdByName(@Param("username") String username);
 }

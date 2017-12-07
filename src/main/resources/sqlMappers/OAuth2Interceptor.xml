@@ -2,21 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ddgs.dao.AccountDao">
 
-    <resultMap id="roles" type="com.ddgs.model.Account">
+    <resultMap id="urls" type="com.ddgs.model.Account">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="password" column="password"/>
-        <collection property="roles" ofType="com.ddgs.model.Role"
+        <collection property="urls" ofType="com.ddgs.model.OpenAPI"
                     column="id">
             <id column="rId" property="id"/>
-            <result column="roleName" property="roleName"/>
+            <result column="url" property="url"/>
         </collection>
     </resultMap>
 
 
-    <select id="findByName" resultMap="roles">
-       select a.id,a.name,a.password,c.id as rId ,c.roleName from Account a,AccountRole b ,Role c
-          where a.name = #{name} and a.id = b.aId and b.rId = c.id;
+    <select id="findByName" resultMap="urls">
+      select a.id,a.username as name ,a.password,c.id as id ,c.url from Account a,AccountScope b ,OpenAPI c
+          where a.username = #{username} and a.id = b.aId and b.sId = c.sId;
     </select>
 
 </mapper>

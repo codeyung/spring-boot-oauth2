@@ -4,10 +4,10 @@ package com.ddgs.model;
  * @author: codeyung  E-mail:yjc199308@gmail.com
  * @date: 2017/11/28.下午2:39
  */
-public class Role {
+public class OpenAPI {
 
     private int id;
-    private String roleName;
+    private String url;
 
     public int getId() {
         return id;
@@ -17,11 +17,11 @@ public class Role {
         this.id = id;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public String getUrl() {
+        return url;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

@@ -142,33 +142,33 @@ public class OAuth2Controller {
             return result;
         }
 
-        //检查提交的客户端id是否正确
-        result = checkClientId(client_id);
-        if ((Boolean) result.get("success") == false) {
-            return result;
-        }
+        if (grant_type.equals(GrantType.AUTHORIZATION_CODE.toString())) {
 
-        //当 scope 不等于默认值时检查认证权限
-        if (!scope.equals("basic")) {
-            result = checkScope(client_id, scope);
+            //检查提交的客户端id是否正确
+            result = checkClientId(client_id);
             if ((Boolean) result.get("success") == false) {
                 return result;
             }
-        }
 
-        // 检查客户端安全KEY是否正确
-        result = checkClientSecret(client_secret);
-        if ((Boolean) result.get("success") == false) {
-            return result;
-        }
-
-        if (grant_type.equals(GrantType.AUTHORIZATION_CODE.toString())) {
             // 检查验证类型，此处只检查AUTHORIZATION_CODE类型
             result = checkAuthCode(code, client_id);
             if ((Boolean) result.get("success") == false) {
                 return result;
             }
         } else if (grant_type.equals(GrantType.CLIENT_CREDENTIALS.toString())) {
+
+            //检查提交的客户端id是否正确
+            result = checkClientId(client_id);
+            if ((Boolean) result.get("success") == false) {
+                return result;
+            }
+
+            // 检查客户端安全KEY是否正确
+            result = checkClientSecret(client_secret);
+            if ((Boolean) result.get("success") == false) {
+                return result;
+            }
+
             //检查验证类型,此处只检查 CLIENT_CREDENTIALS类型
             result = checkAccount(client_id, client_secret);
             if ((Boolean) result.get("success") == false) {
@@ -180,17 +180,34 @@ public class OAuth2Controller {
             if ((Boolean) result.get("success") == false) {
                 return result;
             }
+            //获取 client_id
+            client_id = oAuth2Service.getClientIdByName(username);
+
         } else if (grant_type.equals(GrantType.REFRESH_TOKEN.toString())) {
+            //检查提交的客户端id是否正确
+            result = checkClientId(client_id);
+            if ((Boolean) result.get("success") == false) {
+                return result;
+            }
             // 检查验证类型，此处只检查REFRESH_TOKEN类型
             result = checkRefreshToken(client_id, refresh_token);
             if ((Boolean) result.get("success") == false) {
                 return result;
             }
+
         } else {
             //不支持的类型
             result.setSuccess(false);
             result.setError(ErrorCode.RESPONSETYPE_ERROR);
             return result;
+        }
+
+        //当 scope 不等于默认值时检查认证权限
+        if (!scope.equals("basic")) {
+            result = checkScope(client_id, scope);
+            if ((Boolean) result.get("success") == false) {
+                return result;
+            }
         }
 
         //查看是否已经已有 Access Token
@@ -212,7 +229,7 @@ public class OAuth2Controller {
         }
 
         //绑定Access Token
-        oAuth2Service.addAccessToken(accessToken, oAuth2Service.getAIdByClientId(client_id));
+        oAuth2Service.addAccessToken(accessToken, client_id);
         result.setSuccess(true);
         result.put("access_token", accessToken);
         result.put("token_type", "bearer");

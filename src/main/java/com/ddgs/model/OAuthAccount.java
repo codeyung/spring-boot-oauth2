@@ -22,7 +22,7 @@ public class OAuthAccount {
     private String redirect_uri;
 
 
-    private List<Role> roles;
+    private List<OpenAPI> openAPIs;
 
 
     public int getId() {
@@ -89,11 +89,11 @@ public class OAuthAccount {
         this.redirect_uri = redirect_uri;
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    public List<OpenAPI> getOpenAPIs() {
+        return openAPIs;
     }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
+    public void setOpenAPIs(List<OpenAPI> openAPIs) {
+        this.openAPIs = openAPIs;
     }
 }

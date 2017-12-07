@@ -2,6 +2,7 @@ package com.ddgs.interceptor;
 
 import com.ddgs.ErrorCode;
 import com.ddgs.Result;
+import com.ddgs.service.OAuth2InterceptorService;
 import com.ddgs.tools.JSONUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -15,6 +16,7 @@ import org.apache.oltu.oauth2.common.OAuth;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
@@ -36,6 +38,9 @@ public class OAuth2Interceptor implements HandlerInterceptor {
 
     @Value("${check.accessToken.url}")
     private String CHECK_ACCESS_CODE_URL;
+
+    @Autowired
+    OAuth2InterceptorService oAuth2InterceptorService;
 
     private static final Logger logger = LoggerFactory.getLogger(OAuth2Interceptor.class);
 
@@ -141,6 +146,6 @@ public class OAuth2Interceptor implements HandlerInterceptor {
      * @return
      */
     private boolean checkURL(String accessToken, String url) {
-        return false;
+        return oAuth2InterceptorService.checkURL(accessToken, url);
     }
 }
