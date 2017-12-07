@@ -60,11 +60,6 @@ public class OAuth2Service {
         return true;
     }
 
-    //根据 accessToken 获取 用户
-    public String getAIdByAccessToken(String accessToken) {
-        return "";
-    }
-
     //根据 client_id 获取 accessToken
     public String getAccessTokenByClientId(String client_id) {
         return "";
@@ -80,7 +75,7 @@ public class OAuth2Service {
     }
 
     //给响应用户添加 accessToken
-    public void addAccessToken(String accessToken, String aId) {
+    public void addAccessToken(String accessToken, String client_id) {
 
     }
 

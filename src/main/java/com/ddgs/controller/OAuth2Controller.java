@@ -143,32 +143,12 @@ public class OAuth2Controller {
         }
 
         if (grant_type.equals(GrantType.AUTHORIZATION_CODE.toString())) {
-
-            //检查提交的客户端id是否正确
-            result = checkClientId(client_id);
-            if ((Boolean) result.get("success") == false) {
-                return result;
-            }
-
             // 检查验证类型，此处只检查AUTHORIZATION_CODE类型
             result = checkAuthCode(code, client_id);
             if ((Boolean) result.get("success") == false) {
                 return result;
             }
         } else if (grant_type.equals(GrantType.CLIENT_CREDENTIALS.toString())) {
-
-            //检查提交的客户端id是否正确
-            result = checkClientId(client_id);
-            if ((Boolean) result.get("success") == false) {
-                return result;
-            }
-
-            // 检查客户端安全KEY是否正确
-            result = checkClientSecret(client_secret);
-            if ((Boolean) result.get("success") == false) {
-                return result;
-            }
-
             //检查验证类型,此处只检查 CLIENT_CREDENTIALS类型
             result = checkAccount(client_id, client_secret);
             if ((Boolean) result.get("success") == false) {
@@ -182,13 +162,7 @@ public class OAuth2Controller {
             }
             //获取 client_id
             client_id = oAuth2Service.getClientIdByName(username);
-
         } else if (grant_type.equals(GrantType.REFRESH_TOKEN.toString())) {
-            //检查提交的客户端id是否正确
-            result = checkClientId(client_id);
-            if ((Boolean) result.get("success") == false) {
-                return result;
-            }
             // 检查验证类型，此处只检查REFRESH_TOKEN类型
             result = checkRefreshToken(client_id, refresh_token);
             if ((Boolean) result.get("success") == false) {
