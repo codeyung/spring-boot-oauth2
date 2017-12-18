@@ -5,6 +5,7 @@ package com.ddgs;
  * @date: 2017/11/15.下午5:23
  */
 public enum ErrorCode {
+    SERVER_BUSY(-1, "系统繁忙，此时请开发者稍候再试"),
     ERROR(1, "错误"),
     SERVER_NOTFOUND(2, "服务器错误"),
 

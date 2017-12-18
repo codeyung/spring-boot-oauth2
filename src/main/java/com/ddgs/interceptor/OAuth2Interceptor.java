@@ -4,12 +4,14 @@ import com.ddgs.ErrorCode;
 import com.ddgs.Result;
 import com.ddgs.service.URLService;
 import com.ddgs.tools.JSONUtil;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.oltu.oauth2.common.OAuth;
@@ -71,7 +73,7 @@ public class OAuth2Interceptor implements HandlerInterceptor {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("错误");
             oAuthFaileResponse(response, result);
             return false;
         }
@@ -116,14 +118,18 @@ public class OAuth2Interceptor implements HandlerInterceptor {
      * @throws IOException
      */
     private boolean checkAccessToken(String accessToken) throws IOException {
-        HttpClient httpClient = new DefaultHttpClient();
-        HttpPost httpPost = new HttpPost(CHECK_ACCESS_CODE_URL);
+        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(5000).setConnectionRequestTimeout(1000)
+                .setSocketTimeout(5000).build();
+        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig)
+                .setRetryHandler(new DefaultHttpRequestRetryHandler(0, false)).build();
 
-        List<NameValuePair> paras = new ArrayList<NameValuePair>();
+        List<NameValuePair> paras = new ArrayList<>();
         paras.add(new BasicNameValuePair("access_token", accessToken));
+        HttpPost httpPost = new HttpPost(CHECK_ACCESS_CODE_URL);
+        httpPost.setConfig(requestConfig);
         UrlEncodedFormEntity entity = new UrlEncodedFormEntity(paras, "utf-8");
         httpPost.setEntity(entity);
-        HttpResponse httpResponse = httpClient.execute(httpPost);
+        CloseableHttpResponse httpResponse = httpclient.execute(httpPost);
 
         int status = httpResponse.getStatusLine().getStatusCode();
 

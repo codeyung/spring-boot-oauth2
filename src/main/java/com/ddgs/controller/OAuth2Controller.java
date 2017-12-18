@@ -6,9 +6,6 @@ import com.ddgs.service.OAuth2Service;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
-import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
-import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;
@@ -40,7 +37,7 @@ public class OAuth2Controller {
     @Autowired
     OAuth2Service oAuth2Service;
 
-    @GetMapping(value = "/oauth/authorize")
+    @GetMapping(value = "/oauth2/authorize")
     public Result authorize(HttpServletRequest request,
                             @RequestParam(value = "response_type", defaultValue = "") String response_type,
                             @RequestParam(value = "client_id", defaultValue = "") String client_id,
@@ -48,17 +45,11 @@ public class OAuth2Controller {
                             @RequestParam(value = "scope", defaultValue = "basic") String scope,
                             @RequestParam(value = "state", defaultValue = "") String state) {
         Result result = new Result();
-        try {
-            //构建OAuth 授权请求 检测错误
-            new OAuthAuthzRequest(request);
-        } catch (OAuthSystemException e) {
-            e.printStackTrace();
-            result.setError(ErrorCode.ERROR);
-            return result;
-        } catch (OAuthProblemException e) {
-            e.printStackTrace();
-            result.setError(ErrorCode.ERROR);
-            result.setMsg(e.getDescription());
+
+        //responseType目前仅支持CODE，不支持TOKEN模式
+        if (!response_type.equals(ResponseType.CODE.toString())) {
+            result.setSuccess(false);
+            result.setError(ErrorCode.RESPONSETYPE_ERROR);
             return result;
         }
 
@@ -89,12 +80,7 @@ public class OAuth2Controller {
         }
 
         String authorizationCode = null;
-        //responseType目前仅支持CODE，不支持TOKEN模式
-        if (!response_type.equals(ResponseType.CODE.toString())) {
-            result.setSuccess(false);
-            result.setError(ErrorCode.RESPONSETYPE_ERROR);
-            return result;
-        }
+
 
         //生成授权码
         OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
@@ -116,7 +102,7 @@ public class OAuth2Controller {
     }
 
 
-    @PostMapping(value = {"/oauth/token"})
+    @PostMapping(value = {"/oauth2/token"})
     public Result token(HttpServletRequest request,
                         @RequestParam(value = "grant_type", defaultValue = "") String grant_type,
                         @RequestParam(value = "scope", defaultValue = "basic") String scope,
@@ -128,19 +114,6 @@ public class OAuth2Controller {
                         @RequestParam(value = "redirect_uri", defaultValue = "") String redirect_uri,
                         @RequestParam(value = "refresh_token", defaultValue = "") String refresh_token) {
         Result result = new Result();
-
-        try {
-            //构建OAuth 授权请求 检测错误
-            new OAuthTokenRequest(request);
-        } catch (OAuthSystemException e) {
-            e.printStackTrace();
-            result.setError(ErrorCode.ERROR);
-            return result;
-        } catch (OAuthProblemException e) {
-            result.setError(ErrorCode.ERROR);
-            result.setMsg(e.getDescription());
-            return result;
-        }
 
         if (grant_type.equals(GrantType.AUTHORIZATION_CODE.toString())) {
             // 检查验证类型，此处只检查AUTHORIZATION_CODE类型
@@ -213,7 +186,6 @@ public class OAuth2Controller {
 
         //绑定Access Token
         oAuth2Service.addAccessToken(accessToken, client_id);
-        result.setSuccess(true);
         result.put("access_token", accessToken);
         result.put("token_type", "bearer");
 
@@ -230,14 +202,15 @@ public class OAuth2Controller {
         }
         //绑定RefreshToken 后期支持
         oAuth2Service.addRefreshToken(refreshToken, client_id);
-        result.put("refresh_token", refresh_token);
+        result.put("refresh_token", refreshToken);
         result.put("expires_in", oAuth2Service.getExpireIn(accessToken));
+        result.setSuccess(true);
         return result;
 
     }
 
 
-    @PostMapping(value = "/oauth/check")
+    @PostMapping(value = "/oauth2/check")
     public Result check(@RequestParam("access_token") String accessToken) {
         Result result = new Result();
         if (!oAuth2Service.checkAccessToken(accessToken)) {

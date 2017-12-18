@@ -64,18 +64,12 @@ public class OAuth2Service {
 
     //验证refresh_token是否存在
     public boolean checkRefreshToken(String refresh_token) {
-        String token = redisService.get("refresh_token_" + refresh_token);
-
-        if (StringUtils.isEmpty(token) || !token.equals(refresh_token)) {
-            return false;
-        }
-
-        return true;
+        return redisService.hasKey("refresh_token_" + refresh_token);
     }
 
     //根据 refresh_token 获取 clientId
     public String getClientIdByRefreshToken(String refresh_token) {
-        return redisService.get("refresh_client_id_" + refresh_token);
+        return redisService.get("refresh_token_" + refresh_token);
     }
 
     // 更新 access_token
@@ -88,12 +82,12 @@ public class OAuth2Service {
 
     // 检查code 是否存在
     public boolean checkAuthCode(String code, String client_id) {
-        String authCode = redisService.get("authorizationCode_" + client_id);
+        String authCode = redisService.get("authorization_code_" + client_id);
 
         if (StringUtils.isEmpty(authCode) || !authCode.equals(code)) {
             return false;
         }
-        redisService.del("authorizationCode_" + client_id);
+        redisService.del("authorization_code_" + client_id);
         return true;
     }
 
@@ -109,12 +103,12 @@ public class OAuth2Service {
 
     //根据 client_id 获取 AuthCode
     public String getAuthCodeByClientId(String client_id) {
-        return redisService.get("authorizationCode_" + client_id);
+        return redisService.get("authorization_code_" + client_id);
     }
 
     //code 授权码跟用户绑定
     public void addAuthCode(String code, String client_id) {
-        redisService.set("authorizationCode_" + client_id, code, 3600);
+        redisService.set("authorization_code_" + client_id, code, 600);
     }
 
     //验证 token 是否存在

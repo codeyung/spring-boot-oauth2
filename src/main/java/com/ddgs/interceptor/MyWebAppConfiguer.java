@@ -27,7 +27,7 @@ public class MyWebAppConfiguer extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         HandlerInterceptor interceptor = this.getLoginInterceptor();
-        registry.addInterceptor(interceptor).excludePathPatterns("/oauth/**");
+        registry.addInterceptor(interceptor).excludePathPatterns("/oauth2/**");
         super.addInterceptors(registry);
     }
 }
