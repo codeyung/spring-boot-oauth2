@@ -58,19 +58,32 @@ public class OAuth2Service {
 
     //给响应用户添加 refreshToken
     public void addRefreshToken(String refreshToken, String client_id) {
-        redisService.set("refresh_token_" + refreshToken, client_id, 3600);
-        redisService.set("refresh_client_id_" + client_id, refreshToken, 3660);
+        redisService.set("refresh_token_" + refreshToken, client_id, 3600 * 30);
+        redisService.set("refresh_client_id_" + client_id, refreshToken, 3660 * 30);
     }
 
     //验证refresh_token是否存在
-    public boolean checkRefreshToken(String client_id, String refresh_token) {
-        String token = redisService.get("refresh_client_id_" + client_id);
+    public boolean checkRefreshToken(String refresh_token) {
+        String token = redisService.get("refresh_token_" + refresh_token);
 
         if (StringUtils.isEmpty(token) || !token.equals(refresh_token)) {
             return false;
         }
 
         return true;
+    }
+
+    //根据 refresh_token 获取 clientId
+    public String getClientIdByRefreshToken(String refresh_token) {
+        return redisService.get("refresh_client_id_" + refresh_token);
+    }
+
+    // 更新 access_token
+    public String updateAccessToekn(String client_id) {
+        String accessToken = this.getAccessTokenByClientId(client_id);
+        redisService.set("access_token_" + accessToken, client_id, 3600);
+        redisService.set("access_token_client_id_" + client_id, accessToken, 3660);
+        return accessToken;
     }
 
     // 检查code 是否存在
@@ -87,6 +100,11 @@ public class OAuth2Service {
     //根据 client_id 获取 accessToken
     public String getAccessTokenByClientId(String client_id) {
         return redisService.get("access_token_client_id_" + client_id);
+    }
+
+    //根据 client_id 获取 refresh_token
+    public String getRefreshToeknByClientId(String client_id) {
+        return redisService.get("refresh_client_id_" + client_id);
     }
 
     //根据 client_id 获取 AuthCode
@@ -108,6 +126,5 @@ public class OAuth2Service {
     public long getExpireIn(String accessToken) {
         return redisService.getExpire("access_token_" + accessToken);
     }
-
 
 }

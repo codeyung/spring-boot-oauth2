@@ -162,16 +162,23 @@ public class OAuth2Controller {
             }
             //获取 client_id
             client_id = oAuth2Service.getClientIdByName(username);
-        }
-//        else if (grant_type.equals(GrantType.REFRESH_TOKEN.toString())) {
-//            // 检查验证类型，此处只检查REFRESH_TOKEN类型
-//            result = checkRefreshToken(client_id, refresh_token);
-//            if ((Boolean) result.get("success") == false) {
-//                return result;
-//            }
-//
-//        }
-        else {
+        } else if (grant_type.equals(GrantType.REFRESH_TOKEN.toString())) {
+            // 检查验证类型，此处只检查REFRESH_TOKEN类型
+            result = checkRefreshToken(refresh_token);
+
+            if ((Boolean) result.get("success") == false) {
+                return result;
+            } else {
+                client_id = oAuth2Service.getClientIdByRefreshToken(refresh_token);
+                String accessToken = oAuth2Service.updateAccessToekn(client_id);
+                result.put("access_token", accessToken);
+                result.put("token_type", "bearer");
+                result.put("refresh_token", refresh_token);
+                result.put("expires_in", oAuth2Service.getExpireIn(accessToken));
+                return result;
+            }
+
+        } else {
             //不支持的类型
             result.setSuccess(false);
             result.setError(ErrorCode.RESPONSETYPE_ERROR);
@@ -211,19 +218,19 @@ public class OAuth2Controller {
         result.put("token_type", "bearer");
 
 
-//        //生成RefreshToken
-//        String refreshToken = null;
-//        try {
-//            refreshToken = oauthIssuerImpl.accessToken();
-//        } catch (OAuthSystemException e) {
-//            e.printStackTrace();
-//            result.setSuccess(false);
-//            result.setError(ErrorCode.ACCESS_TOKEN_FAIL);
-//            return result;
-//        }
-//        //绑定RefreshToken 后期支持
-//        oAuth2Service.addRefreshToken(refreshToken, client_id);
-//        result.put("refresh_token", refresh_token);
+        //生成RefreshToken
+        String refreshToken = null;
+        try {
+            refreshToken = oauthIssuerImpl.accessToken();
+        } catch (OAuthSystemException e) {
+            e.printStackTrace();
+            result.setSuccess(false);
+            result.setError(ErrorCode.REFRESH_TOKEN_FAIL);
+            return result;
+        }
+        //绑定RefreshToken 后期支持
+        oAuth2Service.addRefreshToken(refreshToken, client_id);
+        result.put("refresh_token", refresh_token);
         result.put("expires_in", oAuth2Service.getExpireIn(accessToken));
         return result;
 
@@ -331,14 +338,13 @@ public class OAuth2Controller {
     /**
      * 检查验证类型，此处只检查REFRESH_TOKEN类型
      *
-     * @param client_id
      * @param refresh_token
      * @return
      */
-    Result checkRefreshToken(String client_id, String refresh_token) {
+    Result checkRefreshToken(String refresh_token) {
         Result result = new Result();
-        if (!oAuth2Service.checkRefreshToken(client_id, refresh_token)) {
-            result.setError(ErrorCode.INVALID_ACCESS_TOKEN);
+        if (!oAuth2Service.checkRefreshToken(refresh_token)) {
+            result.setError(ErrorCode.INVALID_REFRESH_TOKEN);
             return result;
         }
         result.setSuccess(true);
@@ -354,10 +360,13 @@ public class OAuth2Controller {
     Result checkExistAccessToekn(String client_id) {
         Result result = new Result();
         String accessToken = oAuth2Service.getAccessTokenByClientId(client_id);
+        String refresh_token = oAuth2Service.getRefreshToeknByClientId(client_id);
         if (!StringUtils.isEmpty(accessToken)) {
             result.setSuccess(true);
             result.put("access_token", accessToken);
+            result.put("token_type", "bearer");
             result.put("expires_in", oAuth2Service.getExpireIn(accessToken));
+            result.put("refresh_token", refresh_token);
             return result;
         }
         return result;
