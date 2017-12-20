@@ -72,9 +72,18 @@ public class OAuth2Service {
         return redisService.get("refresh_token_" + refresh_token);
     }
 
+    // 删除 refresh_token
+    public void delRefreshToken(String refresh_token, String client_id) {
+        redisService.del("refresh_token_" + refresh_token);
+        redisService.del("refresh_client_id_" + client_id);
+    }
+
     // 更新 access_token
     public String updateAccessToekn(String client_id) {
         String accessToken = this.getAccessTokenByClientId(client_id);
+        if (StringUtils.isEmpty(accessToken)) {
+            return "";
+        }
         redisService.set("access_token_" + accessToken, client_id, 3600);
         redisService.set("access_token_client_id_" + client_id, accessToken, 3660);
         return accessToken;
@@ -120,5 +129,6 @@ public class OAuth2Service {
     public long getExpireIn(String accessToken) {
         return redisService.getExpire("access_token_" + accessToken);
     }
+
 
 }

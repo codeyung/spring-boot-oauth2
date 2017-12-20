@@ -81,7 +81,6 @@ public class OAuth2Controller {
 
         String authorizationCode = null;
 
-
         //生成授权码
         OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
         try {
@@ -144,6 +143,13 @@ public class OAuth2Controller {
             } else {
                 client_id = oAuth2Service.getClientIdByRefreshToken(refresh_token);
                 String accessToken = oAuth2Service.updateAccessToekn(client_id);
+                if (StringUtils.isEmpty(accessToken)) {
+                    oAuth2Service.delRefreshToken(refresh_token, client_id);
+                    result.setSuccess(false);
+                    result.setError(ErrorCode.INVALID_REFRESH_TOKEN);
+                    return result;
+                }
+
                 result.put("access_token", accessToken);
                 result.put("token_type", "bearer");
                 result.put("refresh_token", refresh_token);
@@ -189,19 +195,22 @@ public class OAuth2Controller {
         result.put("access_token", accessToken);
         result.put("token_type", "bearer");
 
-
-        //生成RefreshToken
-        String refreshToken = null;
-        try {
-            refreshToken = oauthIssuerImpl.accessToken();
-        } catch (OAuthSystemException e) {
-            e.printStackTrace();
-            result.setSuccess(false);
-            result.setError(ErrorCode.REFRESH_TOKEN_FAIL);
-            return result;
+        //查看是否已经已有 RefreshToken
+        String refreshToken = oAuth2Service.getRefreshToeknByClientId(client_id);
+        if (StringUtils.isEmpty(refreshToken)) {
+            //生成RefreshToken
+            try {
+                refreshToken = oauthIssuerImpl.accessToken();
+            } catch (OAuthSystemException e) {
+                e.printStackTrace();
+                result.setSuccess(false);
+                result.setError(ErrorCode.REFRESH_TOKEN_FAIL);
+                return result;
+            }
+            //绑定RefreshToken
+            oAuth2Service.addRefreshToken(refreshToken, client_id);
         }
-        //绑定RefreshToken 后期支持
-        oAuth2Service.addRefreshToken(refreshToken, client_id);
+
         result.put("refresh_token", refreshToken);
         result.put("expires_in", oAuth2Service.getExpireIn(accessToken));
         result.setSuccess(true);
