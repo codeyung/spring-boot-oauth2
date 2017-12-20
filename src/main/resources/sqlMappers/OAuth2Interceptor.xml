@@ -3,8 +3,8 @@
 <mapper namespace="com.ddgs.dao.URLDao">
 
     <select id="getURLs" resultType="string">
-      select url from OAuth2Client a , AccountScope b , OpenAPI c where
-        a.aId = b.aId and b.sId = c.sId and a.client_id = #{client_id} ;
+      select url from OAuth2User a , OAuth2UserScope b , OpenAPI c where
+        a.id = b.ouId and b.sId = c.sId and a.client_id = #{client_id} ;
 
     </select>
 </mapper>

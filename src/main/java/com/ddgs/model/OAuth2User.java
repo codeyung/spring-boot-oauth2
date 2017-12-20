@@ -6,7 +6,7 @@ import java.util.List;
  * @author: codeyung  E-mail:yjc199308@gmail.com
  * @date: 2017/11/29.下午4:51
  */
-public class OAuthAccount {
+public class OAuth2User {
 
 
     private int id;
@@ -17,12 +17,12 @@ public class OAuthAccount {
     private String client_id;
     private String client_secret;
 
-    private String scope;
-    private String grant_type;
     private String redirect_uri;
 
+    private String memo;
 
-    private List<OpenAPI> openAPIs;
+
+    private List<OpenAPI> urls;
 
 
     public int getId() {
@@ -65,22 +65,6 @@ public class OAuthAccount {
         this.client_secret = client_secret;
     }
 
-    public String getScope() {
-        return scope;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
-    }
-
-    public String getGrant_type() {
-        return grant_type;
-    }
-
-    public void setGrant_type(String grant_type) {
-        this.grant_type = grant_type;
-    }
-
     public String getRedirect_uri() {
         return redirect_uri;
     }
@@ -89,11 +73,19 @@ public class OAuthAccount {
         this.redirect_uri = redirect_uri;
     }
 
-    public List<OpenAPI> getOpenAPIs() {
-        return openAPIs;
+    public String getMemo() {
+        return memo;
     }
 
-    public void setOpenAPIs(List<OpenAPI> openAPIs) {
-        this.openAPIs = openAPIs;
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
+
+    public List<OpenAPI> getUrls() {
+        return urls;
+    }
+
+    public void setUrls(List<OpenAPI> urls) {
+        this.urls = urls;
     }
 }

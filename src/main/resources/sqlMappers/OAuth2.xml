@@ -4,27 +4,27 @@
 
 
     <select id="checkClientId" resultType="boolean">
-         select count(*) from OAuth2Client where client_id = #{client_id};
+         select count(*) from OAuth2User where client_id = #{client_id};
     </select>
 
     <select id="checkClientSecret" resultType="boolean">
-         select count(*) from OAuth2Client where client_secret = #{client_secret};
+         select count(*) from OAuth2User where client_secret = #{client_secret};
     </select>
     <select id="checkClient" resultType="boolean">
-          select count(*) from OAuth2Client where client_id = #{client_id} and client_secret = #{client_secret};
+          select count(*) from OAuth2User where client_id = #{client_id} and client_secret = #{client_secret};
     </select>
 
     <select id="checkAccount" resultType="boolean">
-        select count(*) from Account where username = #{username} and password = #{password};
+        select count(*) from OAuth2User where username = #{username} and password = #{password};
     </select>
 
     <select id="getClientIdByName" resultType="string">
-        select b.client_id from Account a , OAuth2Client b where a.id = b.aId and a.username = #{username};
+        select client_id from OAuth2User where username = #{username};
     </select>
 
     <select id="checkScope" resultType="boolean">
-        select a.num = #{num} from (select count(*) as num from OAuth2Client a , AccountScope b , Scope c where
-        a.aId = b.aId and b.sId = c.id and a.client_id = #{client_id}
+        select a.num = #{num} from (select count(*) as num from OAuth2User a , OAuth2UserScope b , Scope c where
+        a.id = b.ouId and b.sId = c.id and a.client_id = #{client_id}
         and c.scope in (
         <foreach collection="scopes" item="scope" index="index"
                  open="" close="" separator=",">
