@@ -85,7 +85,7 @@ public class OAuth2Service {
             return "";
         }
         redisService.set("access_token_" + accessToken, client_id, 3600);
-        redisService.set("access_token_client_id_" + client_id, accessToken, 3660);
+        redisService.set("access_token_client_id_" + client_id, accessToken, 3600);
         return accessToken;
     }
 

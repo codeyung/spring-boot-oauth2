@@ -143,18 +143,13 @@ public class OAuth2Controller {
             } else {
                 client_id = oAuth2Service.getClientIdByRefreshToken(refresh_token);
                 String accessToken = oAuth2Service.updateAccessToekn(client_id);
-                if (StringUtils.isEmpty(accessToken)) {
-                    oAuth2Service.delRefreshToken(refresh_token, client_id);
-                    result.setSuccess(false);
-                    result.setError(ErrorCode.INVALID_REFRESH_TOKEN);
+                if (!StringUtils.isEmpty(accessToken)) {
+                    result.put("access_token", accessToken);
+                    result.put("token_type", "bearer");
+                    result.put("refresh_token", refresh_token);
+                    result.put("expires_in", oAuth2Service.getExpireIn(accessToken));
                     return result;
                 }
-
-                result.put("access_token", accessToken);
-                result.put("token_type", "bearer");
-                result.put("refresh_token", refresh_token);
-                result.put("expires_in", oAuth2Service.getExpireIn(accessToken));
-                return result;
             }
 
         } else {
