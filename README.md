@@ -43,16 +43,18 @@ https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Authorization+Server
 开放平台可以使用clinet_id和client_secret调用本接口来获取access_token。clinet_id和client_secret由开发平台分发 请妥善保管。服务器 IP 白名单 后期添加。
 
 
-client_credential 客户端模式 申请 access_token
-POST /oauth2/token
-
-名称         描述                              类型   可为空
-scope	    申请的权限范围，可选项 默认为basic	String	Y
-client_secret	第三方用户唯一凭证密钥，即app_secret	String	N
-client_id	第三方用户唯一凭证，即app_id	String	N
-grant_type	获取access_token填写client_credential	String	N
-
-返回格式：
+> ## client_credential 客户端模式 申请 access_token
+> POST /oauth2/token
+>
+|参数名称|描述|类型|是否必填|
+|-|-|-|-|
+|scope|申请的权限范围,可选项 默认为basic|String|Y|
+|client_secret|第三方用户唯一凭证密钥，即app_secret|String|N|
+|client_id|第三方用户唯一凭证，即app_id|String|N|
+|grant_type|获取access_token填写client_credential|String|N|
+>
+> ### 返回结果
+>
 {
     "access_token": "948ad78157cf1b96a147b83b589c5d9a",
     "refresh_token": "91671e25b0bf077108fce003de322f56",
@@ -60,24 +62,27 @@ grant_type	获取access_token填写client_credential	String	N
     "token_type": "bearer",
     "expires_in": 3050
 }
-
+>
 参数说明
-名称             描述
-access_token    获取到的令牌
-refresh_token   更新令牌
-expires_in      access_token有效时间 单位 秒
-token_type      默认返回
-
-
-更新 access_token
-POST /oauth2/token
-
-名称          描述       类型                可为空
-grant_type	获取access_token填写refresh_token	String	N
-scope	申请的权限范围，可选项 默认为basic	String	Y
-refresh_token	更新令牌	String	N
-
-返回格式：
+|名称|描述|
+|-|-|
+|access_token|获取到的令牌|
+|refresh_token|更新令牌|
+|expires_in|access_token有效时间 单位 秒|
+|token_type|默认返回|
+>
+>
+> ## 更新 access_token
+> POST /oauth2/token
+>
+|名称|描述|类型|可为空|
+|-|-|-|-|
+|grant_type|获取access_token填写refresh_token|String|N|
+|scope|申请的权限范围，可选项 默认为basic|String|Y|
+|refresh_token|更新令牌|String|N|
+>
+> ### 返回结果
+>
 {
     "access_token": "948ad78157cf1b96a147b83b589c5d9a",
     "refresh_token": "91671e25b0bf077108fce003de322f56",
@@ -85,28 +90,29 @@ refresh_token	更新令牌	String	N
     "token_type": "bearer",
     "expires_in": 3050
 }
-
+>
 参数说明
-名称              描述
-access_token    获取到的凭证
-refresh_token   刷新凭证
-expires_in      access_token有效时间 单位 秒
-token_type      默认返回
-
-Scope说明
-
-scope表示申请的权限范围
-
-名称      描述
-basic   基本接口默认
-develop 高级接口
-root    超级接口
-
-
-默认用户只有basic 权限，如果要访问更高级别接口需要另外申请！
-
-错误码说明
-返回格式：
+|名称|描述|
+|-|-|
+|access_token|获取到的凭证|
+|refresh_token|刷新凭证|
+|expires_in|access_token有效时间 单位 秒|
+|token_type|默认返回|
+>
+>
+> ## Scope说明
+> 
+> scope表示申请的权限范围
+>
+|名称|描述|
+|-|-|
+|basic|基本接口默认|
+|develop|高级接口|
+|root|超级接口|
+>
+>默认用户只有basic 权限，如果要访问更高级别接口需要另外申请！
+>错误码说明
+> ### 返回格式：
 {
     "success": false,
     "error": {
@@ -115,30 +121,31 @@ root    超级接口
         "message": "客户端验证失败，如错误的client_id/client_secret。"
     }
 }
-
+>
 参数说明
-名称          描述
-msg         失败信息
-code        错误码
-message     错误详细描述
-
-Code-错误码说明
-
-名称     描述
-1       错误
-2       服务器错误
-3       用户未找到
-4       密码错误
-5       客户端验证失败，如错误的client_id/client_secret。
-6       access_token无效或已过期。
-7       缺少授权成功后的回调地址。
-8       错误的授权码
-9       Content-Type 错误
-10      错误的用户名/密码
-11      授权类型错误
-12      access_token创建失败
-13      授权码创建失败
-14      权限不足，范围错误
-15      refresh_token失效
-16      refresh_token创建失败
-
+|名称|描述|
+|-|-|
+|msg|失败信息|
+|code|错误码|
+|message|错误详细描述|
+>
+> ## Code-错误码说明
+>
+|名称|描述|
+|-|-|
+|1|错误|
+|2|服务器错误|
+|3|用户未找到|
+|4|密码错误|
+|5|客户端验证失败，如错误的client_id/client_secret。|
+|6|access_token无效或已过期。|
+|7|缺少授权成功后的回调地址。|
+|8|错误的授权码|
+|9|Content-Type 错误|
+|10|错误的用户名/密码|
+|11|授权类型错误|
+|12|access_token创建失败|
+|13|授权码创建失败|
+|14|权限不足，范围错误|
+|15|refresh_token失效|
+|16|refresh_token创建失败|
