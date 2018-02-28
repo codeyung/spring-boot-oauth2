@@ -48,10 +48,10 @@
 >
 |参数名称|描述|类型|是否必填|
 |-|-|-|-|
-|scope|申请的权限范围,可选项 默认为basic|String|Y|
-|client_secret|第三方用户唯一凭证密钥，即app_secret|String|N|
-|client_id|第三方用户唯一凭证，即app_id|String|N|
-|grant_type|获取access_token填写client_credential|String|N|
+| scope|申请的权限范围,可选项 默认为basic|String|Y|
+| client_secret|第三方用户唯一凭证密钥，即app_secret|String|N|
+| client_id|第三方用户唯一凭证，即app_id|String|N|
+| grant_type|获取access_token填写client_credential|String|N|
 >
 > ### 返回结果
 >
@@ -69,10 +69,10 @@
 >
 |名称|描述|
 |-|-|
-|access_token|获取到的令牌|
-|refresh_token|更新令牌|
-|expires_in|access_token有效时间 单位 秒|
-|token_type|默认返回|
+| access_token|获取到的令牌|
+| refresh_token|更新令牌|
+| expires_in|access_token有效时间 单位 秒|
+| token_type|默认返回|
 >
 >
 > ## 更新 access_token
@@ -81,9 +81,9 @@
 >
 |名称|描述|类型|可为空|
 |-|-|-|-|
-|grant_type|获取access_token填写refresh_token|String|N|
-|scope|申请的权限范围，可选项 默认为basic|String|Y|
-|refresh_token|更新令牌|String|N|
+| grant_type|获取access_token填写refresh_token|String|N|
+| scope|申请的权限范围，可选项 默认为basic|String|Y|
+| refresh_token|更新令牌|String|N|
 >
 >
 > ### 返回结果
@@ -102,10 +102,10 @@
 >
 |名称|描述|
 |-|-|
-|access_token|获取到的凭证|
-|refresh_token|刷新凭证|
-|expires_in|access_token有效时间 单位 秒|
-|token_type|默认返回|
+| access_token|获取到的凭证|
+| refresh_token|刷新凭证|
+| expires_in|access_token有效时间 单位 秒|
+| token_type|默认返回|
 >
 >
 > ## Scope说明
@@ -114,9 +114,9 @@
 >
 |名称|描述|
 |-|-|
-|basic|基本接口默认|
-|develop|高级接口|
-|root|超级接口|
+| basic|基本接口默认|
+| develop|高级接口|
+| root|超级接口|
 >
 > 默认用户只有basic 权限，如果要访问更高级别接口需要另外申请！
 > 错误码说明
@@ -136,28 +136,27 @@
 >
 |名称|描述|
 |-|-|
-|msg|失败信息|
-|code|错误码|
-|message|错误详细描述|
+| msg|失败信息|
+| code|错误码|
+| message|错误详细描述|
 >
 > ## Code-错误码说明
 >
 |名称|描述|
 |-|-|
-|1|错误|
-|2|服务器错误|
-|3|用户未找到|
-|4|密码错误|
-|5|客户端验证失败，如错误的client_id/client_secret。|
-|6|access_token无效或已过期。|
-|7|缺少授权成功后的回调地址。|
-|8|错误的授权码|
-|9|Content-Type 错误|
-|10|错误的用户名/密码|
-|11|授权类型错误|
-|12|access_token创建失败|
-|13|授权码创建失败|
-|14|权限不足，范围错误|
-|15|refresh_token失效|
-|16|refresh_token创建失败|
->
+| 1|错误|
+| 2|服务器错误|
+| 3|用户未找到|
+| 4|密码错误|
+| 5|客户端验证失败，如错误的client_id/client_secret。|
+| 6|access_token无效或已过期。|
+| 7|缺少授权成功后的回调地址。|
+| 8|错误的授权码|
+| 9|Content-Type 错误|
+| 10|错误的用户名/密码|
+| 11|授权类型错误|
+| 12|access_token创建失败|
+| 13|授权码创建失败|
+| 14|权限不足，范围错误|
+| 15|refresh_token失效|
+| 16|refresh_token创建失败|
