@@ -55,6 +55,7 @@ https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Authorization+Server
 >
 > ### 返回结果
 >
+```
 {
     "access_token": "948ad78157cf1b96a147b83b589c5d9a",
     "refresh_token": "91671e25b0bf077108fce003de322f56",
@@ -62,6 +63,7 @@ https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Authorization+Server
     "token_type": "bearer",
     "expires_in": 3050
 }
+```
 >
 >参数说明
 |名称|描述|
@@ -83,6 +85,7 @@ https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Authorization+Server
 >
 > ### 返回结果
 >
+```
 {
     "access_token": "948ad78157cf1b96a147b83b589c5d9a",
     "refresh_token": "91671e25b0bf077108fce003de322f56",
@@ -90,6 +93,7 @@ https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Authorization+Server
     "token_type": "bearer",
     "expires_in": 3050
 }
+```
 >
 >参数说明
 |名称|描述|
@@ -113,6 +117,7 @@ https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Authorization+Server
 >默认用户只有basic 权限，如果要访问更高级别接口需要另外申请！
 >错误码说明
 > ### 返回格式：
+```
 {
     "success": false,
     "error": {
@@ -121,6 +126,7 @@ https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Authorization+Server
         "message": "客户端验证失败，如错误的client_id/client_secret。"
     }
 }
+```
 >
 >参数说明
 |名称|描述|
