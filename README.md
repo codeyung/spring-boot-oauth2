@@ -40,7 +40,7 @@
 >http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html
 >https://cwiki.apache.org/confluence/display/OLTU/OAuth+2.0+Authorization+Server
 >
->开放平台可以使用clinet_id和client_secret调用本接口来获取access_token。clinet_id和client_secret由开发平台分发 请妥善保管。服务器 IP 白名单 >后期添加。
+>开放平台可以使用clinet_id和client_secret调用本接口来获取access_token。clinet_id和client_secret由开发平台分发 请妥善保管。服务器 IP 白名单后期添加。
 >
 >
 > ## client_credential 客户端模式 申请 access_token
