@@ -5,7 +5,7 @@
 >
 >access_token是开放平台的全局唯一接口调用凭据，调用各接口时都需使用access_token。access_token的有效期目前为1个小时，需定时刷新。
 >
->开放平台的API调用所需的access_token的使用及生成方式说明：
+>开放平台的API调用所需的access_token的使用及生成方式说明： 
 >
 >1、建议统一获取和刷新access_token，否则容易造成冲突，导致access_token覆盖而影响业务；
 >
